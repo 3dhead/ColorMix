@@ -87,7 +87,33 @@ public class ColorDistance {
 	    return Math.sqrt(Math.pow(lab2[0] - lab1[0], 2) + Math.pow(lab2[1] - lab1[1], 2) + Math.pow(lab2[2] - lab1[2], 2));
 	}
 	
+	public static double colorDifference2(Color e1, Color e2) {	
+	    long rmean = ( (long)e1.getRed() + (long)e2.getRed() ) / 2;
+	    long r = (long)e1.getRed() - (long)e2.getRed();
+	    long g = (long)e1.getGreen() - (long)e2.getGreen();
+	    long b = (long)e1.getBlue() - (long)e2.getBlue();
+	    
+	    
+	    return Math.sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8));
+	}
+	
 	public static Color mixColors(Color... colors) {
+	    float ratio = 1f / ((float) colors.length);
+	    int r = 0, g = 0, b = 0, a = 0;
+	    for (Color color : colors) {
+	        r += Math.pow(color.getRed(), 2.0) * ratio;
+	        g += Math.pow(color.getGreen(), 2.0) * ratio;
+	        b += Math.pow(color.getBlue(), 2.0) * ratio;
+	        a += Math.pow(color.getAlpha(), 2.0) * ratio;
+	    }
+	    r = (int) Math.sqrt(r);
+	    g = (int) Math.sqrt(g);
+	    b = (int) Math.sqrt(b);
+	    a = (int) Math.sqrt(a);
+	    return new Color(r, g, b, a);
+	}
+	
+	public static Color mixColors2(Color... colors) {
 	    float ratio = 1f / ((float) colors.length);
 	    int r = 0, g = 0, b = 0, a = 0;
 	    for (Color color : colors) {
@@ -124,21 +150,21 @@ public class ColorDistance {
 			}			
 		}
 		
-		// three colors
-		for (WNCotmanPalette cotman1 : WNCotmanPalette.values()) {
-			for (WNCotmanPalette cotman2 : WNCotmanPalette.values()) {
-				for (WNCotmanPalette cotman3 : WNCotmanPalette.values()) {
-					if ((cotman1 == cotman2) && (cotman2 == cotman3)) {
-						continue;
-					}
-
-					String newName = cotman1.getName() + " + " + cotman2.getName() + " + " + cotman3.getName();
-					Color newColor = mixColors(cotman1.getColor(), cotman2.getColor(), cotman3.getColor());
-					newName += "#"+Integer.toHexString(newColor.getRGB()).substring(2);
-					distanceMap.put(colorDifference(targetColor, newColor), newName);
-				}
-			}
-		}
+//		// three colors
+//		for (WNCotmanPalette cotman1 : WNCotmanPalette.values()) {
+//			for (WNCotmanPalette cotman2 : WNCotmanPalette.values()) {
+//				for (WNCotmanPalette cotman3 : WNCotmanPalette.values()) {
+//					if ((cotman1 == cotman2) && (cotman2 == cotman3)) {
+//						continue;
+//					}
+//
+//					String newName = cotman1.getName() + " + " + cotman2.getName() + " + " + cotman3.getName();
+//					Color newColor = mixColors(cotman1.getColor(), cotman2.getColor(), cotman3.getColor());
+//					newName += "#"+Integer.toHexString(newColor.getRGB()).substring(2);
+//					distanceMap.put(colorDifference(targetColor, newColor), newName);
+//				}
+//			}
+//		}
 		
 		String msg = "<html><body><div style='background-color: #"+Integer.toHexString(targetColor.getRGB()).substring(2)+";width:50px;height:50px'></div>";
 		msg += "<div style='width:50px;height:25px'></div>";
@@ -166,8 +192,12 @@ public class ColorDistance {
 	public static void main(String[] args) {		
 		// Bordeux new Color(122, 0, 92);
 		
-		findMix(new Color(122, 0, 92));
-//		findMix(Color.decode("#1cadc6"));
+//		findMix(new Color(122, 0, 92));
+//		findMix(Color.decode("#d0cfad"));
+//		findMix(Color.decode("#ea7a58"));
+		findMix(Color.decode("#c2a172"));
+		
+		
 
 	}
 }
